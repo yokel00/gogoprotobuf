@@ -29,11 +29,14 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/gogo/protobuf/vanity"
 	"github.com/gogo/protobuf/vanity/command"
 )
 
 func main() {
+	fmt.Println("Start")
 	req := command.Read()
 	files := req.GetProtoFile()
 
