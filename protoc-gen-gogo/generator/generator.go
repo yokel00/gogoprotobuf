@@ -35,9 +35,9 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*
-	The code generator for the plugin for the Google protocol buffer compiler.
-	It generates Go code from the protocol buffer description files read by the
-	main routine.
+The code generator for the plugin for the Google protocol buffer compiler.
+It generates Go code from the protocol buffer description files read by the
+main routine.
 */
 package generator
 
@@ -62,11 +62,13 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/cespare/xxhash"
 	"github.com/gogo/protobuf/gogoproto"
 	"github.com/gogo/protobuf/proto"
 	descriptor "github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
 	"github.com/gogo/protobuf/protoc-gen-gogo/generator/internal/remap"
 	plugin "github.com/gogo/protobuf/protoc-gen-gogo/plugin"
+	"github.com/spaolacci/murmur3"
 )
 
 // generatedCodeVersion indicates a version of the generated code.
@@ -1605,6 +1607,7 @@ func (g *Generator) generateEnum(enum *EnumDescriptor) {
 // The tag is a string like "varint,2,opt,name=fieldname,def=7" that
 // identifies details of the field for the protocol buffer marshaling and unmarshaling
 // code.  The fields are:
+//
 //	wire encoding
 //	protocol tag number
 //	opt,req,rep for optional, required, or repeated
@@ -1613,6 +1616,7 @@ func (g *Generator) generateEnum(enum *EnumDescriptor) {
 //	enum= the name of the enum type if it is an enum-typed field.
 //	proto3 if this field is in a proto3 message
 //	def= string representation of the default value, if any.
+//
 // The default value must be in a representation that can be used at run-time
 // to generate the default value. Thus bools become 0 and 1, for instance.
 func (g *Generator) goTag(message *Descriptor, field *descriptor.FieldDescriptorProto, wiretype string) string {
@@ -2653,6 +2657,8 @@ func (g *Generator) generateSetters(mc *msgCtx, topLevelFields []topLevelField) 
 func (g *Generator) generateCommonMethods(mc *msgCtx) {
 	// Reset, String and ProtoMessage methods.
 	g.P("func (m *", mc.goName, ") Reset() { *m = ", mc.goName, "{} }")
+	g.P("func (m *", mc.goName, ") MsgId64() uint64 { return ", xxhash.Sum64([]byte(mc.goName)), " }")
+	g.P("func (m *", mc.goName, ") MsgId32() uint32 { return ", murmur3.Sum32([]byte(mc.goName)), " }")
 	if gogoproto.EnabledGoStringer(g.file.FileDescriptorProto, mc.message.DescriptorProto) {
 		g.P("func (m *", mc.goName, ") String() string { return ", g.Pkg["proto"], ".CompactTextString(m) }")
 	}
