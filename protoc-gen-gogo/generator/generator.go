@@ -2656,9 +2656,9 @@ func (g *Generator) generateSetters(mc *msgCtx, topLevelFields []topLevelField) 
 // generateCommonMethods adds methods to the message that are not on a per field basis.
 func (g *Generator) generateCommonMethods(mc *msgCtx) {
 	// Reset, String and ProtoMessage methods.
-	g.P("func (m *", mc.goName, ") Reset() { *m = ", mc.goName, "{} }")
 	g.P("func (m *", mc.goName, ") MsgId64() uint64 { return ", xxhash.Sum64([]byte(mc.goName)), " }")
 	g.P("func (m *", mc.goName, ") MsgId32() uint32 { return ", murmur3.Sum32([]byte(mc.goName)), " }")
+	g.P("func (m *", mc.goName, ") Reset() { *m = ", mc.goName, "{} }")
 	if gogoproto.EnabledGoStringer(g.file.FileDescriptorProto, mc.message.DescriptorProto) {
 		g.P("func (m *", mc.goName, ") String() string { return ", g.Pkg["proto"], ".CompactTextString(m) }")
 	}
