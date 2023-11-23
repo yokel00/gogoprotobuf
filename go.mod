@@ -7,4 +7,6 @@ require (
 	github.com/spaolacci/murmur3 v1.1.0
 )
 
-replace github.com/gogo/protobuf => github.com/yokel00/gogoprotobuf v1.0.5
+// replace github.com/gogo/protobuf => ../gogoprotobuf
+
+replace github.com/gogo/protobuf v1.3.2 => github.com/yokel00/gogoprotobuf/protoc-gen-gofast v1.0.6
