@@ -2656,12 +2656,18 @@ func (g *Generator) generateSetters(mc *msgCtx, topLevelFields []topLevelField) 
 // generateCommonMethods adds methods to the message that are not on a per field basis.
 func (g *Generator) generateCommonMethods(mc *msgCtx) {
 	// Reset, String and ProtoMessage methods.
+	msgName := fmt.Sprintf("%v.%v", g.file.packageName, mc.goName)
 	g.P("// 返回类型名,为效率代替reflect.TypeOf().Name()")
-	g.P("func (m *", mc.goName, ") MsgName() string { return \"", mc.goName, "\" }")
+	g.P("func (m *", mc.goName, ") MsgName() string { return \"", msgName, "\" }")
 	g.P("// 返回hash64 对MsgName的xxhash.Sum64")
-	g.P("func (m *", mc.goName, ") MsgId64() uint64 { return ", xxhash.Sum64([]byte(mc.goName)), " }")
+	g.P("func (m *", mc.goName, ") MsgId64() uint64 { return ", xxhash.Sum64([]byte(msgName)), " }")
 	g.P("// 返回hash32 对MsgName的murmur3.Sum32")
-	g.P("func (m *", mc.goName, ") MsgId32() uint32 { return ", murmur3.Sum32([]byte(mc.goName)), " }")
+	g.P("func (m *", mc.goName, ") MsgId32() uint32 { return ", murmur3.Sum32([]byte(msgName)), " }")
+	g.P("// 返回Msg实例，为效率代替reflect.TypeOf()")
+	//g.P("func (m *", mc.goName, ") New() *", mc.goName, "{ return &", mc.goName, "{} }")
+	//g.P("func (m *", mc.goName, ") New() *", mc.goName, "{ return &", mc.goName, "{} }")
+	g.P("func (m *", mc.goName, ") New() proto.Message { return &", mc.goName, "{} }")
+	g.P("")
 	g.P("func (m *", mc.goName, ") Reset() { *m = ", mc.goName, "{} }")
 	if gogoproto.EnabledGoStringer(g.file.FileDescriptorProto, mc.message.DescriptorProto) {
 		g.P("func (m *", mc.goName, ") String() string { return ", g.Pkg["proto"], ".CompactTextString(m) }")

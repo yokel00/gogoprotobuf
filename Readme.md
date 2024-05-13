@@ -20,6 +20,7 @@ information about protocol buffers themselves, see
 
 ## Original instruction document https://github.com/golang/protobuf/blob/master/README.md
 
+## gogoprotobuf/protoc-gen-gogo/generator/generator.go
 ## Purpose: To improve efficiency and replace use reflect.TypeOf() gets the struct name
 ### 目的：为提升效率，代替使用反射reflect.TypeOf()获取结构体名称
 ### New methods
